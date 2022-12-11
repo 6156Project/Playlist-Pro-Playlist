@@ -6,7 +6,7 @@ class PlaylistResource(BaseResource):
     def __init__(self, config):
         super().__init__(config)
         self.data_service = None
-        self.columns = ['playlist_name']
+        self.columns = ['name']
 
     def get_full_collection_name(self):
         return self.config.collection_name
