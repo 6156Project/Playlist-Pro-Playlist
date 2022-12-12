@@ -3,8 +3,6 @@ from datetime import datetime
 import json
 import rest_utils
 from service_factory import ServiceFactory
-# from playlists_resource import PlaylistResource
-# from playlist_song_resource import PlaylistSongResource
 from flask_cors import CORS
 from dotenv import load_dotenv
 
