@@ -109,7 +109,7 @@ class PlaylistResource(BaseResource):
                 response['text'] = 'Resource updated.' 
                 response['body'] = {
                     'id': template['id'],
-                    'playlist_name': resource_data['name']
+                    'name': resource_data['name']
                     }
                 response['links'] = [
                     {
