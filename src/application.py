@@ -3,7 +3,7 @@ from datetime import datetime
 import json
 import rest_utils
 from service_factory import ServiceFactory
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 from dotenv import load_dotenv
 
 # load environment variables fron .env
@@ -31,7 +31,8 @@ def get_health():
     return rsp
 
 # /playlists
-@application.route('/api/<resource_collection>', methods=['POST'])
+@application.route('/api/<resource_collection>', methods=['POST', 'OPTIONS'])
+@cross_origin()
 def do_resource_collection(resource_collection):
     request_inputs = rest_utils.RESTContext(request, resource_collection)
     svc = service_factory.get(resource_collection, None)
@@ -39,13 +40,16 @@ def do_resource_collection(resource_collection):
     if request_inputs.method == "POST":
         res = svc.create_resource(resource_data=request_inputs.data)
         rsp = Response(json.dumps(res), status=res['status'], content_type="application/json")
+    elif request_inputs.method == "OPTIONS":
+        rsp = Response("Options", status=200, content_type="application/json")
     else:
         rsp = Response("NOT IMPLEMENTED", status=501, content_type="text/plain")
 
     return rsp
 
 # playlists get info, update, delete
-@application.route("/api/playlists/<id>", methods=["GET", "PUT", "DELETE"])
+@application.route("/api/playlists/<id>", methods=["GET", "PUT", "DELETE", "OPTIONS"])
+@cross_origin()
 def getPlaylist(id):
     request_inputs = rest_utils.RESTContext(request, id)
     svc = service_factory.get("playlists", None)
@@ -59,6 +63,8 @@ def getPlaylist(id):
     elif request_inputs.method == "DELETE":
         res = svc.delete_resource(id)
         rsp = Response(json.dumps(res), status=res['status'], content_type="application/json")
+    elif request_inputs.method == "OPTIONS":
+        rsp = Response("Options", status=200, content_type="application/json")
     else:
         rsp = Response("NOT IMPLEMENTED", status=501, content_type="text/plain")
 
