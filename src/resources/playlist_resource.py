@@ -18,7 +18,7 @@ class PlaylistResource(BaseResource):
         return self.data_service
 
     def get_resource_by_id(self, id):
-        template = {'playlist_id': id}
+        template = {'id': id}
         response = self.get_by_template(template=template)
         if response['status'] == 200:
             response['links'] = [
@@ -64,24 +64,25 @@ class PlaylistResource(BaseResource):
             response['text'] = 'Missing data required'
         else:
             data = {
-                'playlist_id': uuid.uuid4().int,
-                'playlist_name': resource_data['playlist_name']
+                'id': uuid.uuid4().int,
+                'name': resource_data['name']
                 }
             rsp = super().create_resource(data)
             if rsp['status'] == 201:
+                response['status'] = rsp['status']
                 response['text'] = 'Resource created.' 
-                response['body'] = {'playlist_id': data['playlist_id']}
+                response['body'] = {'id': data['id']}
                 response['links'] = [
                     {
-                        "href": f"api/playlists/{data['playlist_id']}",
+                        "href": f"api/playlists/{data['id']}",
                         "rel": "self",
                         "type" : "GET"
                     },{
-                        "href": f"api/playlists/{data['playlist_id']}",
+                        "href": f"api/playlists/{data['id']}",
                         "rel": "self",
                         "type" : "PUT"
                     },{
-                        "href": f"api/playlists/{data['playlist_id']}",
+                        "href": f"api/playlists/{data['id']}",
                         "rel": "self",
                         "type" : "DELETE"
                     }
@@ -90,15 +91,15 @@ class PlaylistResource(BaseResource):
 
     def delete_resource(self, resource_data):
         response = {'status': '', 'text':'', 'body':{}, 'links':[]}
-        data = {'playlist_id': resource_data}
+        data = {'id': resource_data}
         response = super().delete_resource(data)
         return response
 
     def update_resource(self, id, resource_data):
-        template = {'playlist_id': id}
+        template = {'id': id}
 
         response = {'status': '', 'text':'', 'body':{}, 'links':[]}
-        if not resource_data or 'playlist_name' not in resource_data:
+        if not resource_data or 'name' not in resource_data:
             response['status'] = 400
             response['text'] = 'Missing data required'
         else:
@@ -107,16 +108,16 @@ class PlaylistResource(BaseResource):
                 response['status'] = rsp['status']
                 response['text'] = 'Resource updated.' 
                 response['body'] = {
-                    'playlist_id': template['playlist_id'],
-                    'playlist_name': resource_data['playlist_name']
+                    'id': template['id'],
+                    'playlist_name': resource_data['name']
                     }
                 response['links'] = [
                     {
-                        "href": f"api/playlists/{template['playlist_id']}",
+                        "href": f"api/playlists/{template['id']}",
                         "rel": "self",
                         "type" : "GET"
                     },{
-                        "href": f"api/playlists/{template['playlist_id']}",
+                        "href": f"api/playlists/{template['id']}",
                         "rel": "self",
                         "type" : "DELETE"
                     }

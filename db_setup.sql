@@ -1,9 +1,9 @@
-create database if not exists PlaylistSong;
-use PlaylistSong;
+create database if not exists Playlist;
+use Playlist;
 
-drop table if exists PlaylistSong.playlists;
+drop table if exists Playlist.playlists;
 
-create table PlaylistSong.playlists (
-    playlist_id int primary key,
-    playlist_name varchar(30)
+create table Playlist.playlists (
+    id varchar(39) primary key,
+    name varchar(30)
 );
