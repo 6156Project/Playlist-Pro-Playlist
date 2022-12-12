@@ -34,18 +34,14 @@ def get_health():
     return rsp
 
 # /playlists
-@application.route('/api/<resource_collection>', methods=['GET','POST'])
+@application.route('/api/<resource_collection>', methods=['POST'])
 def do_resource_collection(resource_collection):
     request_inputs = rest_utils.RESTContext(request, resource_collection)
     svc = service_factory.get(resource_collection, None)
 
-    if request_inputs.method == "GET":
-        res = svc.get_by_template(template=request_inputs.args,
-                                  field_list=request_inputs.fields)
-        rsp = Response(json.dumps(res, default=str), status=200, content_type="application/json")
-    elif request_inputs.method == "POST":
+    if request_inputs.method == "POST":
         res = svc.create_resource(resource_data=request_inputs.data)
-        rsp = Response(res['text'], status=res['status'], content_type="text/plain")
+        rsp = Response(json.dumps(res), status=res['status'], content_type="application/json")
     else:
         rsp = Response("NOT IMPLEMENTED", status=501, content_type="text/plain")
 
@@ -62,10 +58,10 @@ def getPlaylist(id):
         rsp = Response(json.dumps(res, default=str), status=200, content_type="application/json")
     elif request_inputs.method == "PUT":
         res = svc.update_resource(id, resource_data=request_inputs.data)
-        rsp = Response(res['text'], status=res['status'], content_type="text/plain")
+        rsp = Response(json.dumps(res), status=res['status'], content_type="application/json")
     elif request_inputs.method == "DELETE":
         res = svc.delete_resource(id)
-        rsp = Response(res['text'], status=res['status'], content_type="text/plain")
+        rsp = Response(json.dumps(res), status=res['status'], content_type="application/json")
     else:
         rsp = Response("NOT IMPLEMENTED", status=501, content_type="text/plain")
 

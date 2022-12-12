@@ -27,7 +27,7 @@ class ServiceFactory:
         )
         self.rds_service = RDSDataService(self.rds_svc_config)
         # connect songs resource to rds
-        self.playlists_service_config = PlaylistResourceConfig(self.rds_service, "PlaylistSong.playlists")
+        self.playlists_service_config = PlaylistResourceConfig(self.rds_service, "Playlist.playlists")
         self.playlists_resource = PlaylistResource(self.playlists_service_config)
 
     def get(self, resource_name, default):

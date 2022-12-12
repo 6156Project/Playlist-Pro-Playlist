@@ -1,4 +1,5 @@
 from resources.base_resource import BaseResource
+import uuid
 
 
 class PlaylistResource(BaseResource):
@@ -6,7 +7,7 @@ class PlaylistResource(BaseResource):
     def __init__(self, config):
         super().__init__(config)
         self.data_service = None
-        self.columns = ['playlist_name']
+        self.columns = ['name']
 
     def get_full_collection_name(self):
         return self.config.collection_name
@@ -17,7 +18,21 @@ class PlaylistResource(BaseResource):
         return self.data_service
 
     def get_resource_by_id(self, id):
-        pass
+        template = {'playlist_id': id}
+        response = self.get_by_template(template=template)
+        if response['status'] == 200:
+            response['links'] = [
+                    {
+                        "href": f"api/playlists/{id}",
+                        "rel": "self",
+                        "type" : "PUT"
+                    },{
+                        "href": f"api/playlists/{id}",
+                        "rel": "self",
+                        "type" : "DELETE"
+                    }
+                    ]
+        return response
 
     def get_by_template(self,
                         relative_path=None,
@@ -27,12 +42,20 @@ class PlaylistResource(BaseResource):
                         limit=None,
                         offset=None,
                         order_by=None):
-        
-        return super().get_by_template(relative_path, path_parameters, template, field_list,
+        response = {'status': '', 'text':'', 'body':{}, 'links':[]}
+        rsp = super().get_by_template(relative_path, path_parameters, template, field_list,
                                          limit, offset, order_by)
+        if rsp:
+            response['status'] = 200
+            response['text'] = 'OK'
+            response['body'] = rsp
+        else:
+            response['status'] = 404
+            response['text'] = 'Resource not found.'
+        return response
 
     def create_resource(self, resource_data):
-        response = {}
+        response = {'status': '', 'text':'', 'body':{}, 'links':[]}
         if not resource_data:
             response['status'] = 400
             response['text'] = 'Empty data'
@@ -40,25 +63,63 @@ class PlaylistResource(BaseResource):
             response['status'] = 400
             response['text'] = 'Missing data required'
         else:
-            response = super().create_resource(resource_data)
-
+            data = {
+                'playlist_id': uuid.uuid4().int,
+                'playlist_name': resource_data['playlist_name']
+                }
+            rsp = super().create_resource(data)
+            if rsp['status'] == 201:
+                response['text'] = 'Resource created.' 
+                response['body'] = {'playlist_id': data['playlist_id']}
+                response['links'] = [
+                    {
+                        "href": f"api/playlists/{data['playlist_id']}",
+                        "rel": "self",
+                        "type" : "GET"
+                    },{
+                        "href": f"api/playlists/{data['playlist_id']}",
+                        "rel": "self",
+                        "type" : "PUT"
+                    },{
+                        "href": f"api/playlists/{data['playlist_id']}",
+                        "rel": "self",
+                        "type" : "DELETE"
+                    }
+                    ]
         return response
 
     def delete_resource(self, resource_data):
-        template = {'id': resource_data}
-        return super().delete_resource(template)
+        response = {'status': '', 'text':'', 'body':{}, 'links':[]}
+        data = {'playlist_id': resource_data}
+        response = super().delete_resource(data)
+        return response
 
     def update_resource(self, id, resource_data):
-        template = {'id': id}
+        template = {'playlist_id': id}
 
-        response = {}
-        if not resource_data:
-            response['status'] = 400
-            response['text'] = 'Empty data'
-        elif not all(columns in resource_data for columns in self.columns):
+        response = {'status': '', 'text':'', 'body':{}, 'links':[]}
+        if not resource_data or 'playlist_name' not in resource_data:
             response['status'] = 400
             response['text'] = 'Missing data required'
         else:
-            response = super().update_resource(resource_data, template)
+            rsp = super().update_resource(resource_data, template)
+            if rsp['status'] == 201:
+                response['status'] = rsp['status']
+                response['text'] = 'Resource updated.' 
+                response['body'] = {
+                    'playlist_id': template['playlist_id'],
+                    'playlist_name': resource_data['playlist_name']
+                    }
+                response['links'] = [
+                    {
+                        "href": f"api/playlists/{template['playlist_id']}",
+                        "rel": "self",
+                        "type" : "GET"
+                    },{
+                        "href": f"api/playlists/{template['playlist_id']}",
+                        "rel": "self",
+                        "type" : "DELETE"
+                    }
+                    ]
 
         return response
