@@ -4,6 +4,6 @@ use PlaylistSong;
 drop table if exists PlaylistSong.playlists;
 
 create table PlaylistSong.playlists (
-    playlist_id int primary key auto_increment,
+    playlist_id int primary key,
     playlist_name varchar(30)
 );
