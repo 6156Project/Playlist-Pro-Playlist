@@ -46,6 +46,8 @@ class RDSDataService(BaseDataService):
         else:
             result = None
 
+        self._close_connection()
+
         return result
 
     def list_resources(self):
@@ -55,7 +57,9 @@ class RDSDataService(BaseDataService):
         conn = self._get_connection()
         cursor = conn.cursor()
         cursor.execute(f"SELECT * FROM {collection_name} LIMIT 1")
-        return [i[0] for i in cursor.description]
+        columns = [i[0] for i in cursor.description]
+        self._close_connection()
+        return columns
 
     def create_resource(self, collection_name, resource_data):
         columns = ','.join(resource_data.keys())
@@ -79,6 +83,7 @@ class RDSDataService(BaseDataService):
                 result['status'] = 201
 
         self.connection.commit()
+        self._get_connection()
 
         return result
 
@@ -94,6 +99,7 @@ class RDSDataService(BaseDataService):
             result['text'] = "Resource not found"
             result['status'] = 404
         self.connection.commit()
+        self._get_connection()
 
         return result
 
@@ -109,6 +115,7 @@ class RDSDataService(BaseDataService):
             result['text'] = "Resource updated."
             result['status'] = 201
         self.connection.commit()
+        self._get_connection()
 
         return result
 
