@@ -31,13 +31,17 @@ def get_health():
     return rsp
 
 # /playlists
-@application.route('/api/<resource_collection>', methods=['POST', 'OPTIONS'])
+@application.route('/api/<resource_collection>', methods=['GET', 'POST', 'OPTIONS'])
 @cross_origin()
 def do_resource_collection(resource_collection):
     request_inputs = rest_utils.RESTContext(request, resource_collection)
     svc = service_factory.get(resource_collection, None)
 
-    if request_inputs.method == "POST":
+    if request_inputs.method == "GET":
+        res = svc.get_by_template(template=request_inputs.args,
+                                  field_list=request_inputs.fields)
+        rsp = Response(json.dumps(res, default=str), status=200, content_type="application/json")
+    elif request_inputs.method == "POST":
         res = svc.create_resource(resource_data=request_inputs.data)
         rsp = Response(json.dumps(res), status=res['status'], content_type="application/json")
     elif request_inputs.method == "OPTIONS":
