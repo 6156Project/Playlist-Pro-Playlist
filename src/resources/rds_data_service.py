@@ -83,7 +83,7 @@ class RDSDataService(BaseDataService):
                 result['status'] = 201
 
         self.connection.commit()
-        self._get_connection()
+        self._close_connection()
 
         return result
 
@@ -99,7 +99,7 @@ class RDSDataService(BaseDataService):
             result['text'] = "Resource not found"
             result['status'] = 404
         self.connection.commit()
-        self._get_connection()
+        self._close_connection()
 
         return result
 
@@ -115,7 +115,7 @@ class RDSDataService(BaseDataService):
             result['text'] = "Resource updated."
             result['status'] = 201
         self.connection.commit()
-        self._get_connection()
+        self._close_connection()
 
         return result
 
