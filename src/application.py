@@ -6,6 +6,7 @@ from service_factory import ServiceFactory
 from flask_cors import CORS, cross_origin
 from dotenv import load_dotenv
 import boto3
+import os
 
 # load environment variables fron .env
 load_dotenv()
@@ -71,7 +72,11 @@ def get_health():
     msg = {
         "name": "Playlist Microservice",
         "health": "Good",
-        "at time": str(datetime.now())
+        "at time": str(datetime.now()),
+        "body": {
+            "id": "1234567890",
+            "name": "TestingName"
+        }
     }
     rsp = Response(json.dumps(msg), status=200, content_type="application/json")
     return rsp
