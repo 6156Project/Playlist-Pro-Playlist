@@ -64,7 +64,7 @@ def after_request(rsp):
     except Exception as ex:
         print("[Playlist-Pro-Playlist] Exception occurred on after_request")
         print(ex)
-    return
+    return rsp
 
 @application.route("/api/playlists/health", methods=["GET"])
 def get_health():
