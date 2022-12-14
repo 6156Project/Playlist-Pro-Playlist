@@ -24,34 +24,25 @@ service_factory = ServiceFactory()
 @application.after_request
 def after_request(rsp):
     try:
-        if rsp != None and rsp.status_code == 200:
-            # Init an SNS client with boto3 and grab secrets from GitHub env
-            # Can refactor this to init client somewhere else to improve latency
-            sns_client = boto3.client(
-                "sns",
-                aws_access_key_id=os.environ.get("SNS_ACCESS_KEY_ID"),
-                aws_secret_access_key=os.environ.get("SNS_SECRET_KEY"),
-                region_name=os.environ.get("SNS_REGION")
-            )
+        print("[Playlist-Pro-Playlist] Working with this response")
+        print(rsp)
 
-            string_rsp = rsp.get_data(as_text=True)
-            data = json.loads(string_rsp)
-            body = data["body"]
-            if type(body) == list:
-                print("[Playlist-Pro-Playlist] Processing get playlist requests")
-                for x in body:
-                    x["request_type"] = "GET"
-                    print(x)
-                    # x look like this == {'id': '122784986734896795025413090857960306787', 'name': 'UpdateTest'}
-                    sns_client.publish(
-                        TargetArn=os.environ.get("SNS_ARN"),
-                        Message=json.dumps({"default": json.dumps(x)}),
-                        MessageStructure="json"
-                    )
-            elif type(body) == dict:
-                print("[Playlist-Pro-Playlist] Processing create playlist requests")
-                x = body
-                x["request_type"] = "POST"
+        # Init an SNS client with boto3 and grab secrets from GitHub env
+        # Can refactor this to init client somewhere else to improve latency
+        sns_client = boto3.client(
+            "sns",
+            aws_access_key_id=os.environ.get("SNS_ACCESS_KEY_ID"),
+            aws_secret_access_key=os.environ.get("SNS_SECRET_KEY"),
+            region_name=os.environ.get("SNS_REGION")
+        )
+
+        string_rsp = rsp.get_data(as_text=True)
+        data = json.loads(string_rsp)
+        body = data["body"]
+        if type(body) == list:
+            print("[Playlist-Pro-Playlist] Processing get playlist requests")
+            for x in body:
+                x["request_type"] = "GET"
                 print(x)
                 # x look like this == {'id': '122784986734896795025413090857960306787', 'name': 'UpdateTest'}
                 sns_client.publish(
@@ -59,9 +50,18 @@ def after_request(rsp):
                     Message=json.dumps({"default": json.dumps(x)}),
                     MessageStructure="json"
                 )
-            print("[Playlist-Pro-Playlist] Processed after_request")
-        else:
-            print("[Playlist-Pro-Playlist] Could not process after_request")
+        elif type(body) == dict:
+            print("[Playlist-Pro-Playlist] Processing create playlist requests")
+            x = body
+            x["request_type"] = "POST"
+            print(x)
+            # x look like this == {'id': '122784986734896795025413090857960306787', 'name': 'UpdateTest'}
+            sns_client.publish(
+                TargetArn=os.environ.get("SNS_ARN"),
+                Message=json.dumps({"default": json.dumps(x)}),
+                MessageStructure="json"
+            )
+        print("[Playlist-Pro-Playlist] Processed after_request")
     except Exception as ex:
         print("[Playlist-Pro-Playlist] Exception occurred on after_request")
         print(ex)
