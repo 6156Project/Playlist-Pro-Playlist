@@ -71,7 +71,7 @@ class PlaylistResource(BaseResource):
             if rsp['status'] == 201:
                 response['status'] = rsp['status']
                 response['text'] = 'Resource created.' 
-                response['body'] = {'id': data['id']}
+                response['body'] = {'id': data['id'],'name': data['name']}
                 response['links'] = [
                     {
                         "href": f"api/playlists/{data['id']}",
