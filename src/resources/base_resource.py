@@ -44,7 +44,9 @@ class BaseResource(ABC):
         result = d_service.get_by_template(
             self.get_full_collection_name(),
             full_template,
-            field_list
+            field_list,
+            limit,
+            offset
         )
 
         return result
