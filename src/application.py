@@ -90,7 +90,9 @@ def do_resource_collection(resource_collection):
 
     if request_inputs.method == "GET":
         res = svc.get_by_template(template=request_inputs.args,
-                                  field_list=request_inputs.fields)
+                                  field_list=request_inputs.fields,
+                                  limit=request_inputs.limit,
+                                  offset=request_inputs.offset)
         rsp = Response(json.dumps(res, default=str), status=200, content_type="application/json")
     elif request_inputs.method == "POST":
         res = svc.create_resource(resource_data=request_inputs.data)
