@@ -29,7 +29,9 @@ class RDSDataService(BaseDataService):
     def get_by_template(self,
                         collection_name,
                         template=None,
-                        field_list=None
+                        field_list=None,
+                        limit=None,
+                        offset=None
                         ):
         select_cols = "*" if field_list is None else ','.join(field_list)
 
@@ -37,6 +39,9 @@ class RDSDataService(BaseDataService):
         sql = "SELECT %s FROM %s" % (select_cols, collection_name)
         if template:
             sql += " WHERE " + self.__dict_to_sql(template, 'where')
+        limit = 10 if limit is None else limit
+        offset = 0 if offset is None else offset
+        sql += f' LIMIT {limit} OFFSET {offset}'
 
         conn = self._get_connection()
         result = None
