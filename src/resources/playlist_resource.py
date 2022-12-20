@@ -49,6 +49,41 @@ class PlaylistResource(BaseResource):
             response['status'] = 200
             response['text'] = 'OK'
             response['body'] = rsp
+            response['links'] = [
+                    {
+                        "href": f"api/playlists",
+                        "rel": "self",
+                        "type": "GET"
+                    }, {
+                        "href": f"api/playlists",
+                        "rel": "self",
+                        "type": "POST"
+                    }, {
+                        "href": f"api/playlists",
+                        "rel": "self",
+                        "type" : "PUT"
+                    },{
+                        "href": f"api/playlists",
+                        "rel": "self",
+                        "type" : "DELETE"
+                    }, {
+                        "href": f"api/songs/search",
+                        "rel": "songs",
+                        "type": "GET"
+                    }, {
+                        "href": f"api/playlistsongs",
+                        "rel": "playlistsongs",
+                        "type": "GET"
+                    }, {
+                        "href": f"api/playlistsongs",
+                        "rel": "playlistsongs",
+                        "type": "POST"
+                    }, {
+                        "href": f"api/playlistaccess",
+                        "rel": "playlistsongs",
+                        "type": "POST"
+                    }
+                    ]
         else:
             response['status'] = 404
             response['text'] = 'Resource not found.'
