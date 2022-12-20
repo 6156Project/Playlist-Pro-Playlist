@@ -42,7 +42,7 @@ class RDSDataService(BaseDataService):
         if limit is not None:
             sql += f' LIMIT {limit}'
         if offset is not None:
-            sql += f' OFFSET {offset}
+            sql += f' OFFSET {offset}'
             
         # # Commented out code so that on normal GET we get all playlists
         # # but if specified, we use limit or offset, optionally....
