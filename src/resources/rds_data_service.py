@@ -39,9 +39,16 @@ class RDSDataService(BaseDataService):
         sql = "SELECT %s FROM %s" % (select_cols, collection_name)
         if template:
             sql += " WHERE " + self.__dict_to_sql(template, 'where')
-        limit = 10 if limit is None else limit
-        offset = 0 if offset is None else offset
-        sql += f' LIMIT {limit} OFFSET {offset}'
+        if limit is not None:
+            sql += f' LIMIT {limit}'
+        if offset is not None:
+            sql += f' OFFSET {offset}
+            
+        # # Commented out code so that on normal GET we get all playlists
+        # # but if specified, we use limit or offset, optionally....
+        # limit = 10 if limit is None else limit
+        # offset = 0 if offset is None else offset
+        # sql += f' LIMIT {limit} OFFSET {offset}'
 
         conn = self._get_connection()
         result = None
